@@ -4,58 +4,80 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-// Функция для поиска строки в файле
-void search_in_file(const char *filename, const char *search_str) {
-    FILE *file = fopen(filename, "r"); // Открытие файла для чтения
+void search_in_file(const char *filename, const char *search_bytes) {
+    FILE *file = fopen(filename, "rb"); // Open the file in binary mode
     if (file == NULL) {
-        fprintf(stderr, "Could not open file: %s\n", filename); // Вывод сообщения об ошибке, если файл не удалось открыть
+        fprintf(stderr, "Could not open file: %s\n", filename);
         return;
     }
 
-    char buffer[1024]; // Буфер для чтения строк из файла
-    while (fgets(buffer, sizeof(buffer), file) != NULL) { // Чтение файла построчно
-        if (strstr(buffer, search_str) != NULL) { // Поиск строки в текущей строке
-            printf("Found in file: %s\n", filename); // Вывод сообщения, если строка найдена
-            break; // Прекращение чтения файла после нахождения первого вхождения строки
+    unsigned char buffer[1024]; // Buffer for reading bytes from the file
+    size_t search_len = strlen(search_bytes) / 2; // Length of search bytes
+    unsigned char *search_buffer = (unsigned char *)malloc(search_len); // Buffer to store search bytes in binary format
+
+    // Convert the search string from hexadecimal to binary
+    for (size_t i = 0; i < search_len; i++) {
+        sscanf(search_bytes + 2 * i, "%2hhx", &search_buffer[i]);
+    }
+
+    size_t bytes_read;
+    size_t match_index = 0; // Index to track match progress
+    unsigned char byte;
+
+    while ((bytes_read = fread(buffer, 1, sizeof(buffer), file)) > 0) { // Read file in chunks
+        for (size_t i = 0; i < bytes_read; i++) {
+            byte = buffer[i];
+            if (byte == search_buffer[match_index]) {
+                match_index++;
+                if (match_index == search_len) {
+                    printf("Found sequence in file: %s\n", filename);
+                    fclose(file);
+                    free(search_buffer);
+                    return;
+                }
+            } else {
+                match_index = (byte == search_buffer[0]) ? 1 : 0;
+            }
         }
     }
 
-    fclose(file); // Закрытие файла
+    fclose(file);
+    free(search_buffer);
 }
 
-// Функция для рекурсивного поиска строки в директории
+
 void search_in_directory(const char *path, const char *search_str) {
-    DIR *dir; // Структура для работы с директориями
-    struct dirent *entry; // Структура для хранения информации о текущем элементе директории
-    struct stat statbuf; // Структура для получения информации о файле
+    DIR *dir;
+    struct dirent *entry;
+    struct stat statbuf;
 
-    if ((dir = opendir(path)) == NULL) { // Открытие директории
-        fprintf(stderr, "Could not open directory: %s\n", path); // Вывод сообщения об ошибке, если директорию не удалось открыть
+    if ((dir = opendir(path)) == NULL) {
+        fprintf(stderr, "Could not open directory: %s\n", path);
         return;
     }
 
-    while ((entry = readdir(dir)) != NULL) { // Перебор всех элементов в директории
-        char full_path[1024]; // Полный путь к текущему элементу
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name); // Формирование полного пути к текущему элементу
+    while ((entry = readdir(dir)) != NULL) {
+        char full_path[1024];
+        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
 
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) // Пропуск элементов "." и ".."
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
             continue;
 
-        if (stat(full_path, &statbuf) == -1) { // Получение информации о текущем элементе
-            fprintf(stderr, "Failed to get file status: %s\n", full_path); // Вывод сообщения об ошибке, если информацию о файле не удалось получить
+        if (stat(full_path, &statbuf) == -1) {
+            fprintf(stderr, "Failed to get file status: %s\n", full_path);
             continue;
         }
 
-        if (S_ISDIR(statbuf.st_mode)) { // Проверка, является ли текущий элемент директорией
-            search_in_directory(full_path, search_str); // Рекурсивный вызов функции для обработки вложенной директории
+        if (S_ISDIR(statbuf.st_mode)) {
+            search_in_directory(full_path, search_str);
         } else {
-            search_in_file(full_path, search_str); // Вызов функции для поиска строки в файле
+            search_in_file(full_path, search_str);
         }
     }
 
-    closedir(dir); // Закрытие директории
-}
 
+    closedir(dir);
+}
 
 int main(int argc, char *argv[]) {
     if (argc == 2 && ((strcmp(argv[1], "-h") == 0) || (strcmp(argv[1], "--help") == 0))) {
@@ -75,4 +97,4 @@ int main(int argc, char *argv[]) {
     search_in_directory(directory, search_str);
 
     return 0;
-}
+ }
