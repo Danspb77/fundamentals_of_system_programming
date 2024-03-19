@@ -1,1 +1,1 @@
-/usr/bin/cc -rdynamic CMakeFiles/my_executable.dir/main.c.o -o my_executable 
+/usr/bin/cc CMakeFiles/my_executable.dir/main.c.o -o my_executable 
