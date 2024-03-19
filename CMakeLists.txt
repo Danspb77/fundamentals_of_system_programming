@@ -3,4 +3,4 @@ project(laba1 C)
 
 add_executable(my_executable main.c)
 
-target_compile_options(my_executable PRIVATE -Wall -Wextra -Werror)
+target_compile_options(my_executable PRIVATE -O3)

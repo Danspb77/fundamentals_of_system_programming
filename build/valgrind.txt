@@ -1,0 +1,1 @@
+Found sequence in file: /home/danya/Documents/OSP/test//file1.txt
