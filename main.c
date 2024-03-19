@@ -56,16 +56,23 @@ void search_in_directory(const char *path, const char *search_str) {
     closedir(dir); // Закрытие директории
 }
 
+
 int main(int argc, char *argv[]) {
-    if (argc != 3) { // Проверка количества аргументов командной строки
-        printf("Usage: %s <directory> <search_string>\n", argv[0]); // Вывод сообщения о правильном использовании программы
+    if (argc == 2 && ((strcmp(argv[1], "-h") == 0) || (strcmp(argv[1], "--help") == 0))) {
+        printf("You can use -v to see version and -h to see help\n");
+        return 0;
+    } else if (argc == 2 && ((strcmp(argv[1], "-v") == 0) || (strcmp(argv[1], "--version") == 0))) {
+        printf("Version 1.0\n");
+        return 0;
+    } else if (argc != 3) {
+        printf("Usage: %s <directory> <search_string>\n", argv[0]);
         return 1;
     }
 
-    const char *directory = argv[1]; // Путь к директории для поиска
-    const char *search_str = argv[2]; // Строка для поиска
+    const char *directory = argv[1];
+    const char *search_str = argv[2];
 
-    search_in_directory(directory, search_str); // Вызов функции для начала поиска в указанной директории
+    search_in_directory(directory, search_str);
 
     return 0;
 }
