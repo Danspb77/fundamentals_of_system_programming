@@ -4,49 +4,53 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-void search_in_file(const char *filename, const char *search_bytes) {
+void search_in_file(const char *filename, const char *search_sequence) {
     FILE *file = fopen(filename, "rb"); // Open the file in binary mode
     if (file == NULL) {
         fprintf(stderr, "Could not open file: %s\n", filename);
         return;
     }
 
-    unsigned char buffer[1024]; // Buffer for reading bytes from the file
-    size_t search_len = strlen(search_bytes) / 2; // Length of search bytes
-    unsigned char *search_buffer = (unsigned char *)malloc(search_len); // Buffer to store search bytes in binary format
-
-    // Convert the search string from hexadecimal to binary
-    for (size_t i = 0; i < search_len; i++) {
-        sscanf(search_bytes + 2 * i, "%2hhx", &search_buffer[i]);
+    // Convert search sequence from hexadecimal to binary
+    size_t search_len = strlen(search_sequence) - 2; // Length of search bytes in hexadecimal format
+    unsigned char *search_bytes = (unsigned char *)malloc((search_len / 2) * sizeof(unsigned char));
+    if (search_bytes == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        fclose(file);
+        return;
+    }
+    sscanf(search_sequence + 2, "%2hhx", &search_bytes[0]);
+    for (size_t i = 1; i < search_len / 2; i++) {
+        sscanf(search_sequence + 2 * i + 2, "%2hhx", &search_bytes[i]);
     }
 
+    unsigned char buffer[1024]; // Buffer for reading bytes from the file
     size_t bytes_read;
     size_t match_index = 0; // Index to track match progress
-    unsigned char byte;
 
     while ((bytes_read = fread(buffer, 1, sizeof(buffer), file)) > 0) { // Read file in chunks
         for (size_t i = 0; i < bytes_read; i++) {
-            byte = buffer[i];
-            if (byte == search_buffer[match_index]) {
+            if (buffer[i] == search_bytes[match_index]) {
                 match_index++;
-                if (match_index == search_len) {
+                if (match_index == search_len / 2) {
                     printf("Found sequence in file: %s\n", filename);
                     fclose(file);
-                    free(search_buffer);
+                    free(search_bytes);
                     return;
                 }
             } else {
-                match_index = (byte == search_buffer[0]) ? 1 : 0;
+                match_index = (buffer[i] == search_bytes[0]) ? 1 : 0;
             }
         }
     }
 
+    
+
     fclose(file);
-    free(search_buffer);
+    free(search_bytes);
 }
 
-
-void search_in_directory(const char *path, const char *search_str) {
+void search_in_directory(const char *path, const char *search_sequence) {
     DIR *dir;
     struct dirent *entry;
     struct stat statbuf;
@@ -69,32 +73,25 @@ void search_in_directory(const char *path, const char *search_str) {
         }
 
         if (S_ISDIR(statbuf.st_mode)) {
-            search_in_directory(full_path, search_str);
+            search_in_directory(full_path, search_sequence);
         } else {
-            search_in_file(full_path, search_str);
+            search_in_file(full_path, search_sequence);
         }
     }
-
 
     closedir(dir);
 }
 
 int main(int argc, char *argv[]) {
-    if (argc == 2 && ((strcmp(argv[1], "-h") == 0) || (strcmp(argv[1], "--help") == 0))) {
-        printf("You can use -v to see version and -h to see help\n");
-        return 0;
-    } else if (argc == 2 && ((strcmp(argv[1], "-v") == 0) || (strcmp(argv[1], "--version") == 0))) {
-        printf("Version 1.0\n");
-        return 0;
-    } else if (argc != 3) {
-        printf("Usage: %s <directory> <search_string>\n", argv[0]);
+    if (argc != 3) {
+        printf("Usage: %s <directory> <search_sequence>\n", argv[0]);
         return 1;
     }
 
     const char *directory = argv[1];
-    const char *search_str = argv[2];
+    const char *search_sequence = argv[2];
 
-    search_in_directory(directory, search_str);
+    search_in_directory(directory, search_sequence);
 
     return 0;
- }
+}
