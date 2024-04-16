@@ -66,6 +66,9 @@ CMakeFiles/my_executable.dir/main.c.o: ../main.c \
   /usr/include/strings.h \
   /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+  /usr/include/getopt.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_ext.h \
   /usr/include/dirent.h \
   /usr/include/x86_64-linux-gnu/bits/dirent.h \
   /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
@@ -76,26 +79,8 @@ CMakeFiles/my_executable.dir/main.c.o: ../main.c \
   /usr/include/x86_64-linux-gnu/bits/dirent_ext.h \
   /usr/include/x86_64-linux-gnu/sys/stat.h \
   /usr/include/x86_64-linux-gnu/bits/stat.h \
-  /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
-  /usr/include/unistd.h \
-  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
-  /usr/include/x86_64-linux-gnu/bits/environments.h \
-  /usr/include/x86_64-linux-gnu/bits/confname.h \
-  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
-  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h
+  /usr/include/x86_64-linux-gnu/bits/struct_stat.h
 
-
-/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
-
-/usr/include/x86_64-linux-gnu/bits/unistd.h:
-
-/usr/include/x86_64-linux-gnu/bits/confname.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
-
-/usr/include/unistd.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_stat.h:
 
@@ -155,8 +140,6 @@ CMakeFiles/my_executable.dir/main.c.o: ../main.c \
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
-/usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
 
 /usr/include/stdio.h:
@@ -191,6 +174,8 @@ CMakeFiles/my_executable.dir/main.c.o: ../main.c \
 
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
+/usr/include/x86_64-linux-gnu/bits/getopt_ext.h:
+
 /usr/include/x86_64-linux-gnu/sys/types.h:
 
 /usr/include/endian.h:
@@ -205,13 +190,13 @@ CMakeFiles/my_executable.dir/main.c.o: ../main.c \
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
+/usr/include/getopt.h:
+
 /usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
 
 /usr/include/string.h:
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
-
-/usr/include/x86_64-linux-gnu/bits/environments.h:
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
 

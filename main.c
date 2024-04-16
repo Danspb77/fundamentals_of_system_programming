@@ -16,6 +16,10 @@ void print_version() {
     printf("v 1.0,0 Author: Shurygin Danil N3245\n");
 }
 
+void print_debug_info(const char *filename, long position) {
+    fprintf(stderr, "Found sequence in file: %s (position: %ld)\n", filename, position);
+}
+
 // Функция для поиска заданной последовательности байтов в файле
 void search_in_file(const char *filename, const char *search_sequence) {
     FILE *file = fopen(filename, "rb"); // Открытие файла в бинарном режиме для чтения
@@ -42,12 +46,17 @@ void search_in_file(const char *filename, const char *search_sequence) {
     unsigned char buffer[1024]; // Буфер для чтения байтов из файла
     size_t bytes_read;
     size_t match_index = 0; // Индекс для отслеживания прогресса совпадений
+    long position = 0; // Позиция в файле для отладочной информации
 
     while ((bytes_read = fread(buffer, 1, sizeof(buffer), file)) > 0) { // Чтение файла порциями
         for (size_t i = 0; i < bytes_read; i++) { // Перебор байтов в текущей порции
+            position++;
             if (buffer[i] == search_bytes[match_index]) { // Проверка совпадения текущего байта
                 match_index++; // Увеличение индекса совпадений
                 if (match_index == search_len / 2) { // Если вся последовательность найдена
+                    if (getenv("LAB11DEBUG") != NULL) {
+                        print_debug_info(filename, position - search_len / 2 + 1); // Вывод отладочной информации
+                    }
                     printf("Found sequence in file: %s\n", filename); // Вывод сообщения о найденной последовательности
                     fclose(file); // Закрытие файла
                     free(search_bytes); // Освобождение выделенной памяти
