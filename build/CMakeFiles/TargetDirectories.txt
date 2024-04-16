@@ -1,3 +1,4 @@
 /home/danya/Documents/OSP/lab1/build/CMakeFiles/my_executable.dir
+/home/danya/Documents/OSP/lab1/build/CMakeFiles/clean-all.dir
 /home/danya/Documents/OSP/lab1/build/CMakeFiles/edit_cache.dir
 /home/danya/Documents/OSP/lab1/build/CMakeFiles/rebuild_cache.dir
