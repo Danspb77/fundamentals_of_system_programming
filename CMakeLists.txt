@@ -4,3 +4,7 @@ project(laba1 C)
 add_executable(my_executable main.c)
 
 target_compile_options(my_executable PRIVATE -O3)
+
+add_custom_target(clean-all
+    COMMAND ${CMAKE_COMMAND} -E remove_directory /Documents/OSP/lab1/build
+)
