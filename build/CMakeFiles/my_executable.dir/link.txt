@@ -1,1 +1,1 @@
-/usr/bin/cc  -Wall -Wextra -Werror CMakeFiles/my_executable.dir/main.c.o -o my_executable 
+/usr/bin/cc CMakeFiles/my_executable.dir/main.c.o -o my_executable 

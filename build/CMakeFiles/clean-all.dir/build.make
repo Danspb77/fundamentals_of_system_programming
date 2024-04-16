@@ -67,7 +67,7 @@ include CMakeFiles/clean-all.dir/compiler_depend.make
 include CMakeFiles/clean-all.dir/progress.make
 
 CMakeFiles/clean-all:
-	/usr/bin/cmake -E remove_directory /Documents/OSP/lab1/build
+	/usr/bin/cmake -E remove_directory /home/danya/Documents/OSP/lab1/build/build
 
 clean-all: CMakeFiles/clean-all
 clean-all: CMakeFiles/clean-all.dir/build.make

@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = 
 
-C_FLAGS =  -Wall -Wextra -Werror -O3
+C_FLAGS = -O3
 
