@@ -1,14 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 #include <dirent.h>
 #include <sys/stat.h>
+
+void print_help() {
+    printf("Usage: ./my_executable [options] <directory> <search_sequence>\n");
+    printf("Options:\n");
+    printf("  -h, --help     Print usage information\n");
+    printf("  -v, --version  Print version information\n");
+}
+
+void print_version() {
+    printf("v 1.0,0 Author: Shurygin Danil N3245\n");
+}
 
 // Функция для поиска заданной последовательности байтов в файле
 void search_in_file(const char *filename, const char *search_sequence) {
     FILE *file = fopen(filename, "rb"); // Открытие файла в бинарном режиме для чтения
     if (file == NULL) { // Проверка успешного открытия файла
-        fprintf(stderr, "Could not open file: %s\n", filename); // Вывод сообщения об ошибке
+        fprintf(stderr, "Could not open file: %s\n", filename); // Вывод сообщения об ошибке в поток ошибок
         return;
     }
 
@@ -16,7 +28,7 @@ void search_in_file(const char *filename, const char *search_sequence) {
     size_t search_len = strlen(search_sequence) - 2; // Длина последовательности в шестнадцатеричном формате
     unsigned char *search_bytes = (unsigned char *)malloc((search_len / 2) * sizeof(unsigned char)); // Выделение памяти под байты поиска
     if (search_bytes == NULL) { // Проверка успешного выделения памяти
-        fprintf(stderr, "Memory allocation failed\n"); // Вывод сообщения об ошибке
+        fprintf(stderr, "Memory allocation failed\n"); // Вывод сообщения об ошибке в поток ошибок
         fclose(file); // Закрытие файла
         return;
     }
@@ -58,7 +70,7 @@ void search_in_directory(const char *path, const char *search_sequence) {
     struct stat statbuf;
 
     if ((dir = opendir(path)) == NULL) { // Открытие директории
-        fprintf(stderr, "Could not open directory: %s\n", path); // Вывод сообщения об ошибке
+        fprintf(stderr, "Could not open directory: %s\n", path); // Вывод сообщения об ошибке в поток ошибок
         return;
     }
 
@@ -70,7 +82,7 @@ void search_in_directory(const char *path, const char *search_sequence) {
             continue;
 
         if (stat(full_path, &statbuf) == -1) { // Получение информации о текущем элементе
-            fprintf(stderr, "Failed to get file status: %s\n", full_path); // Вывод сообщения об ошибке
+            fprintf(stderr, "Failed to get file status: %s\n", full_path); // Вывод сообщения об ошибке в поток ошибок
             continue;
         }
 
@@ -84,17 +96,40 @@ void search_in_directory(const char *path, const char *search_sequence) {
     closedir(dir); // Закрытие директории
 }
 
-// Основная функция программы
 int main(int argc, char *argv[]) {
-    if (argc != 3) { // Проверка наличия правильного числа аргументов
-        printf("Usage: %s <directory> <search_sequence>\n", argv[0]); // Вывод сообщения о правильном использовании программы
+    int opt;
+    static struct option long_options[] = {
+        {"help", no_argument, 0, 'h'},
+        {"version", no_argument, 0, 'v'},
+        {0, 0, 0, 0}
+    };
+
+    while ((opt = getopt_long(argc, argv, "hv", long_options, NULL)) != -1) {
+        switch (opt) {
+            case 'h':
+                print_help();
+                return 0;
+            case 'v':
+                print_version();
+                return 0;
+            default:
+                fprintf(stderr, "Invalid option\n");
+                print_help();
+                return 1;
+        }
+    }
+
+    if (argc - optind != 2) {
+        fprintf(stderr, "Invalid number of arguments\n");
+        print_help();
         return 1;
     }
 
-    const char *directory = argv[1]; // Путь к директории для поиска
-    const char *search_sequence = argv[2]; // Последовательность для поиска
+    const char *directory = argv[optind];
+    const char *search_sequence = argv[optind + 1];
 
-    search_in_directory(directory, search_sequence); // Вызов функции для начала поиска в указанной директории
+    // Perform search in directory with given search sequence
+    search_in_directory(directory, search_sequence);
 
     return 0;
 }
